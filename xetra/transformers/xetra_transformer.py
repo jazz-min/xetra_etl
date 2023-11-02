@@ -4,7 +4,7 @@
 from typing import NamedTuple
 
 from xetra.common.s3 import S3BucketConnector
-
+import logging
 
 class XetraSourceConfig(NamedTuple):
     """ Class for source configuration Data """
@@ -43,7 +43,8 @@ class XetraETL():
      def __init__(self, s3_bucket_src: S3BucketConnector,
                  s3_bucket_trg: S3BucketConnector, meta_key: str,
                  src_args: XetraSourceConfig, trg_args: XetraTargetConfig):
-                self.s3_bucket_src = s3_bucket_src
+        self._logger = logging.getLogger(__name__)
+        self.s3_bucket_src = s3_bucket_src
         self.s3_bucket_trg = s3_bucket_trg
         self.meta_key = meta_key
         self.src_args = src_args

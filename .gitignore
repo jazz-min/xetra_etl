@@ -1,3 +1,4 @@
 .DS_Store
 .vscode/
 xetra_etl/
+Pipfile.lock
