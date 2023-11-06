@@ -2,3 +2,6 @@
 .vscode/
 xetra_etl/
 Pipfile.lock
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
