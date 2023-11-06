@@ -2,7 +2,12 @@
 
 import os
 import logging
+from io import StringIO
+import pandas as pd
+
 import boto3
+
+
 
 
 class S3BucketConnector():
@@ -27,8 +32,17 @@ class S3BucketConnector():
         return files
 
 
-    def read_csv_as_df(self):
-        pass
+    def read_csv_as_df(self,key: str, encoding: str = 'utf-8', sep: str = ','):
+        """ Read CSV file from S3 and return a dataframe"""
+
+        self._logger.info('Reading file %s/%s/%s',self.endpoint_url,self._bucket.name, key)
+        csv_obj = self._bucket.Object(key=key).get().get('Body').read().decode(encoding)
+        data = StringIO(csv_obj)
+        dataframe = pd.read_csv(data,sep=sep)
+        return dataframe
+
+
+
 
     def write_df_to_s3(self):
         pass

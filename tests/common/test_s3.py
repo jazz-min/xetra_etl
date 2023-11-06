@@ -99,6 +99,41 @@ class TestS3BucketConnector(unittest.TestCase):
         #Tests after method execution
         self.assertTrue(not list_result)
 
+    def test_read_csv_as_df_ok(self):
+        """ Test read_csv_as_df method to read one csv file from mocked S3 bucket"""
+
+        #Expected Results
+        key_exp = 'test.csv'
+        col1_exp = 'col1'
+        col2_exp = 'col2'
+        val1_exp = 'val1'
+        val2_exp = 'val2'
+        log_exp =f'Reading file {self.s3_endpoint_url}/{self.s3_bucket_name}/{key_exp}'
+
+        #Test init
+        csv_content = f'{col1_exp},{col2_exp}\n{val1_exp},{val2_exp}'
+        self.s3_bucket.put_object(Body=csv_content, Key=key_exp)
+
+        #Method Execution
+        with self.assertLogs() as logm:
+            df_result = self.s3_bucket_conn.read_csv_as_df(key_exp)
+            self.assertIn(log_exp,logm.output[0])
+        #Test after method execution
+        self.assertEqual(df_result.shape[0], 1)
+        self.assertEqual(df_result.shape[1], 2)
+        self.assertEqual(val1_exp, df_result[col1_exp][0])
+        self.assertEqual(val2_exp, df_result[col2_exp][0])
+        #Cleanup
+        self.s3_bucket.delete_objects(
+            Delete = {
+                'Objects': [
+                    {
+                        'Key' : key_exp
+                    }
+                ]
+            }
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
